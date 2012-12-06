@@ -3,6 +3,7 @@
   * Solves the 8-puzzle game.
   */
   
+
 object GameSolver {
 
   val defaultFile = "inputs/hw04_puzz1.txt"

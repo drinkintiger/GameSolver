@@ -1,3 +1,3 @@
-object Configuration {
-
-}
+ class Configuration {
+  
+ }

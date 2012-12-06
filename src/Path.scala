@@ -1,3 +1,3 @@
-object Path {
-
-}
+ class Path {
+  
+ }

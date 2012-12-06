@@ -1,4 +1,4 @@
-class GameMaker (fileName: String) {
+ class GameMaker (fileName: String) {
 
 	
-}
+ }
