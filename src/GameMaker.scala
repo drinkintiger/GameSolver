@@ -1,3 +1,4 @@
-object GameMaker {
+class GameMaker (fileName: String) {
 
+	
 }
