@@ -1,3 +1,39 @@
- class Configuration {
+ class Configuration (config: List[List[Int]]) {
+   
+    type Config = List[List[Int]]
+    trait Move {
+      def change( state: State ): State
+    }
+
+    // Empty changes any state by reducing contents of given glass to 0
+ 	case class Empty( glass: Int ) extends Move {
+ 		def change( state: State ) = state updated ( glass, 0 )
+ 	}
+
+ 	// Fill changes state by filling glass to capacity
+ 	case class Fill( glass: Int ) extends Move {
+ 		def change( state: State ) = state updated ( glass, capacities( glass ) )
+ 	}
+
+ 	// Pour changes state by transferring whatever will fit into glass "to",
+ 	// taken from glass "from"
+ 	case class Pour( from: Int, to: Int ) extends Move {
+ 		def change( state: State ) = {
+ 			// "amount" is the smallest of current contents of "from" glass and
+ 			// the room left-over in "to" glass
+ 			val amount = state( from ) min ( capacities( to ) - state( to ) )
+ 					state updated ( from, state( from ) - amount ) updated ( to, state( to ) + amount )
+ 		}
   
+ 	}
+ 	
+ 	val glasses = 0 until capacities.length
+
+ 	val moves =
+ 		( for ( g <- glasses ) yield Empty( g ) ) ++
+ 		( for ( g <- glasses ) yield Fill( g ) ) ++
+ 		( for { 
+          from <- glasses 
+          to <- glasses if from != to 
+ 		  } yield Pour( from, to ) )
  }
