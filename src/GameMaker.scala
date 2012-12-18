@@ -1,7 +1,27 @@
  class GameMaker (fileName: String) {
   val goal = "123456780"
   val initialPath = new Path( Nil )
+  
+    // States
+  type State = List[Int]
+  val startState = capacities map ( x => 0 )
+  
+   // Moves:
+  // base trait
+  trait Move {
+    def change( state: State ): State
+  }
+  
+  val glasses = 0 until capacities.length
 
+  val moves =
+    ( for ( g <- glasses ) yield Empty( g ) ) ++
+      ( for ( g <- glasses ) yield Fill( g ) ) ++
+      ( for { 
+          from <- glasses 
+          to <- glasses if from != to 
+        } yield Pour( from, to ) )
+        
   // function to take a set of Paths and generate extensions of that Set
   // (i.e., paths that are longer by a single step than those in the Set)
   // in the form of a Stream of progressively longer Paths
