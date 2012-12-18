@@ -20,11 +20,19 @@
  		val temp = config(slot + 3)
  		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
  	}
- 	// Fill changes state by filling glass to capacity
- 	case class Fill( glass: Int ) extends Move {
- 		def change( state: State ) = state updated ( glass, capacities( glass ) )
+ 	
+ 	case class Left(config: List[Int]) extends Move {
+ 		val slot = config.indexOf(0)
+ 		val temp = config(slot - 1)
+ 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
  	}
-
+ 	
+ 	case class Right(config: List[Int]) extends Move {
+ 		val slot = config.indexOf(0)
+ 		val temp = config(slot + 1)
+ 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
+ 	}
+ 	
  	// Pour changes state by transferring whatever will fit into glass "to",
  	// taken from glass "from"
  	case class Pour( from: Int, to: Int ) extends Move {
