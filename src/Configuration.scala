@@ -1,15 +1,25 @@
- class Configuration (config: List[List[Int]]) {
-   
-    type Config = List[List[Int]]
+ case class Configuration (config: List[List[Int]]) {
+    
+	// States
+    type State = List[Int]
+    val startState = config.head
+  
     trait Move {
       def change( state: State ): State
     }
 
     // Empty changes any state by reducing contents of given glass to 0
- 	case class Empty( glass: Int ) extends Move {
- 		def change( state: State ) = state updated ( glass, 0 )
+ 	case class Up(config: List[Int]) extends Move {
+ 		val slot = config.indexOf(0)
+ 		val temp = config(slot - 3)
+ 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
  	}
-
+ 	
+ 	case class Down(config: List[Int]) extends Move {
+ 		val slot = config.indexOf(0)
+ 		val temp = config(slot + 3)
+ 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
+ 	}
  	// Fill changes state by filling glass to capacity
  	case class Fill( glass: Int ) extends Move {
  		def change( state: State ) = state updated ( glass, capacities( glass ) )
@@ -35,5 +45,5 @@
  		( for { 
           from <- glasses 
           to <- glasses if from != to 
- 		  } yield Pour( from, to ) )
+ 		  } yield Pour( from, to ) ) */
  }
