@@ -1,7 +1,16 @@
- class GameMaker (fileName: String) {
+ import scala.io.Source._
+
+class GameMaker (fileName: String) {
   val goal = "123456780"
-  val initialPath = new Path( Nil )
+  val lines = fromFile(fileName).getLines.toList
+  val capacities = lines map (x => (x + '0').toInt) 
   
+  println("Starting Configuration")
+  for(e <- lines) println(e) 
+  
+  if ( lines == goal ) println("Already the solution.")
+  
+  else{
     // States
   type State = List[Int]
   val startState = capacities map ( x => 0 )
@@ -10,6 +19,27 @@
   // base trait
   trait Move {
     def change( state: State ): State
+  }
+  
+    // Empty changes any state by reducing contents of given glass to 0
+  case class Empty( glass: Int ) extends Move {
+    def change( state: State ) = state updated ( glass, 0 )
+  }
+  
+    // Fill changes state by filling glass to capacity
+  case class Fill( glass: Int ) extends Move {
+    def change( state: State ) = state updated ( glass, capacities( glass ) )
+  }
+  
+    // Pour changes state by transferring whatever will fit into glass "to",
+  // taken from glass "from"
+  case class Pour( from: Int, to: Int ) extends Move {
+    def change( state: State ) = {
+      // "amount" is the smallest of current contens of "from" glass and
+      // the room left-over in "to" glass
+      val amount = state( from ) min ( capacities( to ) - state( to ) )
+      state updated ( from, state( from ) - amount ) updated ( to, state( to ) + amount )
+    }
   }
   
   val glasses = 0 until capacities.length
@@ -58,3 +88,4 @@
       if path.endState contains target
     } yield path
  }
+}
