@@ -8,7 +8,7 @@ class GameMaker (fileName: String) {
   for(e <- lines) println(e) 
   // States
   type State = List[Int]
-  val startState = capacities map ( x => 0 )
+  val startState = lines
 
   // Moves:
   // base trait
@@ -47,21 +47,19 @@ class GameMaker (fileName: String) {
  		def change( state: State ) = {
  			// "amount" is the smallest of current contents of "from" glass and
  			// the room left-over in "to" glass
- 			val amount = state( from ) min ( capacities( to ) - state( to ) )
+ 			val amount = state( from ) min ( lines( to ) - state( to ) )
  					state updated ( from, state( from ) - amount ) updated ( to, state( to ) + amount )
  		}
   
  	}
 
-  val glasses = 0 until capacities.length
-
+  //val glasses = 0 until lines.length
+  val slot = startState.indexOf(0)
   val moves =
-    ( for ( g <- glasses ) yield Empty( g ) ) ++
-      ( for ( g <- glasses ) yield Fill( g ) ) ++
-      ( for { 
-          from <- glasses 
-          to <- glasses if from != to 
-        } yield Pour( from, to ) )
+    (if(slot>2) Up(startState)) ++
+    (if(slot<6) Down( startState ) ) ++
+    (if(slot != 0 || slot !=3 || slot != 6) Left( startState ) ) ++
+    (if(slot != 2 || slot !=5 || slot != 8) Right( startState ) )
 
   // Paths
   class Path( history: List[Move] ) {
