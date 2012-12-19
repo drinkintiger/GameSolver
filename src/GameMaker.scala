@@ -4,24 +4,88 @@ class GameMaker (fileName: String) {
   val goal = "123456780"
   val lines = (fromFile(fileName).mkString.replaceAll(" ", "").replaceAll("\\n", "").toList) map (x => (x + '0').toInt)
   
-  //val initialPath = new Path( Nil ) // start with empty Path
-  
   println("Starting Configuration")
   for(e <- lines) println(e) 
-  /*
-  if ( lines == goal ) println("Already the solution.")
-  
-  else{
-    // States
+  // States
   type State = List[Int]
   val startState = capacities map ( x => 0 )
-  
-   // Moves:
+
+  // Moves:
   // base trait
   trait Move {
-    def change( state: State ): State
+      def change( state: State ): State
+    }
+
+    // Empty changes any state by reducing contents of given glass to 0
+ 	case class Up(config: List[Int]) extends Move {
+ 		val slot = config.indexOf(0)
+ 		val temp = config(slot - 3)
+ 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
+ 	}
+ 	
+ 	case class Down(config: List[Int]) extends Move {
+ 		val slot = config.indexOf(0)
+ 		val temp = config(slot + 3)
+ 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
+ 	}
+ 	
+ 	case class Left(config: List[Int]) extends Move {
+ 		val slot = config.indexOf(0)
+ 		val temp = config(slot - 1)
+ 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
+ 	}
+ 	
+ 	case class Right(config: List[Int]) extends Move {
+ 		val slot = config.indexOf(0)
+ 		val temp = config(slot + 1)
+ 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
+ 	}
+ 	
+ 	// Pour changes state by transferring whatever will fit into glass "to",
+ 	// taken from glass "from"
+ 	case class Pour( from: Int, to: Int ) extends Move {
+ 		def change( state: State ) = {
+ 			// "amount" is the smallest of current contents of "from" glass and
+ 			// the room left-over in "to" glass
+ 			val amount = state( from ) min ( capacities( to ) - state( to ) )
+ 					state updated ( from, state( from ) - amount ) updated ( to, state( to ) + amount )
+ 		}
+  
+ 	}
+
+  val glasses = 0 until capacities.length
+
+  val moves =
+    ( for ( g <- glasses ) yield Empty( g ) ) ++
+      ( for ( g <- glasses ) yield Fill( g ) ) ++
+      ( for { 
+          from <- glasses 
+          to <- glasses if from != to 
+        } yield Pour( from, to ) )
+
+  // Paths
+  class Path( history: List[Move] ) {
+    // final state led to by the history of moves
+    def endState: State = trackState( history )
+
+    // method that applies the history list, starting at the END,
+    // and working backwards to the front, moving from startState onwards
+    def trackState( ms: List[Move] ): State = ms match {
+      case Nil          => startState
+      case move :: tail => move change trackState( tail )
+    }
+
+    // method to add create a new Path by adding some Move to front of history
+    def extend( move: Move ) = new Path( move :: history )
+
+    // for pretty printing
+    override def toString = 
+      ( history.reverse mkString " " ) + "==>> " + endState
   }
-        
+
+  // start with empty Path
+  val initialPath = new Path( Nil )
+
   // function to take a set of Paths and generate extensions of that Set
   // (i.e., paths that are longer by a single step than those in the Set)
   // in the form of a Stream of progressively longer Paths
@@ -57,5 +121,4 @@ class GameMaker (fileName: String) {
       path <- pathSet
       if path.endState contains target
     } yield path
- }*/
 }

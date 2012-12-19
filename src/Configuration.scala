@@ -1,4 +1,4 @@
- case class Configuration (config: List[List[Int]]) {
+/* case class Configuration (config: List[List[Int]]) {
     
 	// States
     type State = List[Int]
@@ -54,4 +54,4 @@
           from <- glasses 
           to <- glasses if from != to 
  		  } yield Pour( from, to ) ) */
- }
+ //}
