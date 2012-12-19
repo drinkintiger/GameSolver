@@ -1,5 +1,5 @@
  import scala.io.Source._
-
+//
 class GameMaker (fileName: String) {
   val goal = "123456780"
   val lines = (fromFile(fileName).mkString.replaceAll(" ", "").replaceAll("\\n", "").toList) map (x => (x + '0').toInt)
