@@ -1,57 +1,33 @@
-/* case class Configuration (config: List[List[Int]]) {
-    
-	// States
-    type State = List[Int]
-    val startState = config.head
-  
-    trait Move {
-      def change( state: State ): State
-    }
+ case class Configuration (config: List[Int]) {
+   val toMove = config.indexOf(0) 
+   
+   
+   
+   
+   def move (m: Move): Configuration = {
+     
+     def isValid (m: Move): Boolean = m match {
+       case Left => if (toMove % 3 == 0) false else true
+       case Right => if (toMove == 2 || toMove == 5 || toMove == 8) false else true
+       case Up => if (toMove <= 2) false else true
+       case Down => if (toMove >= 6) false else true
+     }
+     
+     if (isValid(m)) 
+     
+     
+     Configuration(List(List(1)))
+   }
+   
+   
+   
+   
+   
+	
+ }
 
-    // Empty changes any state by reducing contents of given glass to 0
- 	case class Up(config: List[Int]) extends Move {
- 		val slot = config.indexOf(0)
- 		val temp = config(slot - 3)
- 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
- 	}
- 	
- 	case class Down(config: List[Int]) extends Move {
- 		val slot = config.indexOf(0)
- 		val temp = config(slot + 3)
- 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
- 	}
- 	
- 	case class Left(config: List[Int]) extends Move {
- 		val slot = config.indexOf(0)
- 		val temp = config(slot - 1)
- 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
- 	}
- 	
- 	case class Right(config: List[Int]) extends Move {
- 		val slot = config.indexOf(0)
- 		val temp = config(slot + 1)
- 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
- 	}
- 	
- 	// Pour changes state by transferring whatever will fit into glass "to",
- 	// taken from glass "from"
- 	case class Pour( from: Int, to: Int ) extends Move {
- 		def change( state: State ) = {
- 			// "amount" is the smallest of current contents of "from" glass and
- 			// the room left-over in "to" glass
- 			val amount = state( from ) min ( capacities( to ) - state( to ) )
- 					state updated ( from, state( from ) - amount ) updated ( to, state( to ) + amount )
- 		}
-  
- 	}
- 	
- 	val glasses = 0 until capacities.length
-
- 	val moves =
- 		( for ( g <- glasses ) yield Empty( g ) ) ++
- 		( for ( g <- glasses ) yield Fill( g ) ) ++
- 		( for { 
-          from <- glasses 
-          to <- glasses if from != to 
- 		  } yield Pour( from, to ) ) */
- //}
+ sealed abstract class Move
+ case object Left extends Move
+ case object Right extends Move
+ case object Up extends Move
+ case object Down extends Move
