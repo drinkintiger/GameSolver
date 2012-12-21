@@ -9,38 +9,15 @@ class GameMaker (fileName: String) {
   // States
   type State = List[Int]
   val startState = lines
-
+  val startMoves = List (Left, Right, Up, Down)
+  
   // Moves:
   // base trait
   trait Move {
       def change( state: State ): State
     }
 
-    // Empty changes any state by reducing contents of given glass to 0
- 	case class Up(config: List[Int]) extends Move {
- 		val slot = config.indexOf(0)
- 		val temp = config(slot - 3)
- 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
- 	}
- 	
- 	case class Down(config: List[Int]) extends Move {
- 		val slot = config.indexOf(0)
- 		val temp = config(slot + 3)
- 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
- 	}
- 	
- 	case class Left(config: List[Int]) extends Move {
- 		val slot = config.indexOf(0)
- 		val temp = config(slot - 1)
- 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
- 	}
- 	
- 	case class Right(config: List[Int]) extends Move {
- 		val slot = config.indexOf(0)
- 		val temp = config(slot + 1)
- 		def change( state: State ) = state updated ( slot, temp ) updated ( config.indexOf(temp), 0 )
- 	}
- 	
+    
  	// Pour changes state by transferring whatever will fit into glass "to",
  	// taken from glass "from"
  	case class Pour( from: Int, to: Int ) extends Move {
@@ -52,15 +29,9 @@ class GameMaker (fileName: String) {
  		}
   
  	}
-
-  //val glasses = 0 until lines.length
-  val slot = startState.indexOf(0)
-  val moves =
-    (if(slot>2) Up(startState)) ++
-    (if(slot<6) Down( startState ) ) ++
-    (if(slot != 0 || slot !=3 || slot != 6) Left( startState ) ) ++
-    (if(slot != 2 || slot !=5 || slot != 8) Right( startState ) )
-
+ 	
+ 	val moves = for (e <- startMoves) yield Configuration(lines) move(e)
+ 
   // Paths
   class Path( history: List[Move] ) {
     // final state led to by the history of moves

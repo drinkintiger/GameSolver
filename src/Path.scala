@@ -1,5 +1,5 @@
- //class Path ( history: List[Int] ) {
-   /* // final state led to by the history of moves
+ class Path ( history: List[Int] ) {
+    // final state led to by the history of moves
     def endState: State = trackState( history )
 
     // method that applies the history list, starting at the END,
@@ -15,5 +15,5 @@
     // for pretty printing
     override def toString = 
       ( history.reverse mkString " " ) + "==>> " + endState
-  */
- //}
+  
+ }
