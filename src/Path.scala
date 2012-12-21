@@ -1,4 +1,7 @@
- class Path ( history: List[Int] ) {
+ class Path ( history: List[Move] ) {
+    type State = List[Int]
+    val startState = Nil
+    
     // final state led to by the history of moves
     def endState: State = trackState( history )
 
@@ -6,7 +9,7 @@
     // and working backwards to the front, moving from startState onwards
     def trackState( ms: List[Move] ): State = ms match {
       case Nil          => startState
-      case move :: tail => move change trackState( tail )
+      case move :: tail => Configuration(trackState( tail )) move(move)
     }
 
     // method to add create a new Path by adding some Move to front of history
@@ -15,5 +18,5 @@
     // for pretty printing
     override def toString = 
       ( history.reverse mkString " " ) + "==>> " + endState
-  
+      
  }

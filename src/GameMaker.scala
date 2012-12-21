@@ -2,55 +2,18 @@
 //
 class GameMaker (fileName: String) {
   val goal = "123456780"
-  val lines = (fromFile(fileName).mkString.replaceAll(" ", "").replaceAll("\\n", "").toList) map (x => (x + '0').toInt)
+  val lines = (fromFile(fileName).mkString.replaceAll(" ", "").replaceAll("\\n", "").toList) map (x => (x - 48).toInt)
   
   println("Starting Configuration")
-  for(e <- lines) println(e) 
+  
+  for(e <- lines) print(e) 
   // States
   type State = List[Int]
   val startState = lines
   val startMoves = List (Left, Right, Up, Down)
-  
-  // Moves:
-  // base trait
-  trait Move {
-      def change( state: State ): State
-    }
 
-    
- 	// Pour changes state by transferring whatever will fit into glass "to",
- 	// taken from glass "from"
- 	case class Pour( from: Int, to: Int ) extends Move {
- 		def change( state: State ) = {
- 			// "amount" is the smallest of current contents of "from" glass and
- 			// the room left-over in "to" glass
- 			val amount = state( from ) min ( lines( to ) - state( to ) )
- 					state updated ( from, state( from ) - amount ) updated ( to, state( to ) + amount )
- 		}
-  
- 	}
  	
- 	val moves = for (e <- startMoves) yield Configuration(lines) move(e)
- 
-  // Paths
-  class Path( history: List[Move] ) {
-    // final state led to by the history of moves
-    def endState: State = trackState( history )
-
-    // method that applies the history list, starting at the END,
-    // and working backwards to the front, moving from startState onwards
-    def trackState( ms: List[Move] ): State = ms match {
-      case Nil          => startState
-      case move :: tail => move change trackState( tail )
-    }
-
-    // method to add create a new Path by adding some Move to front of history
-    def extend( move: Move ) = new Path( move :: history )
-
-    // for pretty printing
-    override def toString = 
-      ( history.reverse mkString " " ) + "==>> " + endState
-  }
+  val moves = for (e <- startMoves) yield Configuration(lines) move(e)
 
   // start with empty Path
   val initialPath = new Path( Nil )
@@ -65,7 +28,7 @@ class GameMaker (fileName: String) {
       // so long as we never revisit anything in explored set
       val more = for {
         path <- paths
-        next <- moves map path.extend
+        next <- startMoves map path.extend
         if !( explored contains next.endState )
       } yield next
 
